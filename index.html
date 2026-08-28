@@ -5,18 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>45 Day Interview Sprint</title>
 <style>
-  :root { color-scheme: light dark; --bg:#f7f7f5; --card:#fff; --text:#1c1c1a; --muted:#6f6f68; --line:#deded8; --accent:#111; --soft:#f0f0ec; --ok:#2f7d4b; }
+  :root { color-scheme: light dark; --bg:#f7f7f5; --card:#fff; --text:#1c1c1a; --muted:#6f6f68; --line:#deded8; --accent:#111; --soft:#f0f0ec; --ok:#2f7d4b; --ease-out:cubic-bezier(0.23,1,0.32,1); }
   @media (prefers-color-scheme: dark) { :root { --bg:#151515; --card:#1d1d1d; --text:#f1f1ee; --muted:#a3a39c; --line:#393936; --accent:#f5f5f2; --soft:#252523; --ok:#76c893; } }
   * { box-sizing:border-box; }
   body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); }
   .wrap { max-width:1080px; margin:28px auto 64px; padding:0 18px; }
-  h1 { font-size:24px; margin:0 0 4px; }
-  .sub { color:var(--muted); font-size:14px; margin-bottom:18px; }
-  .topbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
-  .progressShell { flex:1 1 280px; min-width:230px; }
-  .progressMeta { display:flex; justify-content:space-between; gap:10px; font-size:12px; color:var(--muted); margin-bottom:5px; }
-  .progress { height:8px; background:var(--soft); border-radius:999px; overflow:hidden; }
-  .progress > div { height:100%; width:0; background:var(--accent); transition:width .2s ease; }
+  .pageHead { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+  h1 { font-size:27px; line-height:1.15; margin:0 0 6px; letter-spacing:-0.015em; }
+  .sub { color:var(--muted); font-size:14px; }
+  .topbar { display:flex; gap:18px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:18px; }
+  .progressBlock { flex:1 1 260px; min-width:220px; }
+  .progressMeta { display:flex; justify-content:space-between; gap:10px; font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .progress { height:6px; background:var(--soft); border-radius:999px; overflow:hidden; }
+  .progress > div { height:100%; width:0; background:var(--accent); border-radius:999px; transition:width .4s var(--ease-out); }
+  .topbarCtl { display:flex; gap:10px; align-items:center; }
   button, select, input, textarea { font:inherit; color:inherit; }
   button, select { border:1px solid var(--line); background:var(--card); border-radius:8px; padding:8px 10px; }
   button { cursor:pointer; }
@@ -55,11 +58,12 @@
   .dayBtn.hp2 { background:color-mix(in srgb, var(--ok) 48%, var(--card)); color:var(--bg); }
   .dayBtn.hp3 { background:color-mix(in srgb, var(--ok) 75%, var(--card)); color:#fff; }
   .dayBtn.lighter { background:var(--soft); color:var(--muted); font-style:italic; }
-  .headerMeta { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .vgroup { display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
-  .vgroup button { border:none; border-radius:0; background:var(--card); }
-  .vgroup button.active { background:var(--accent); color:var(--bg); }
-  .streak { font-size:12px; color:var(--muted); white-space:nowrap; }
+  .vgroup { display:flex; background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px; }
+  .vgroup button { border:none; background:transparent; border-radius:7px; padding:6px 14px; font-size:13px; color:var(--muted); cursor:pointer; transition:background .16s var(--ease-out), color .16s var(--ease-out), box-shadow .16s var(--ease-out); }
+  .vgroup button:hover { color:var(--text); }
+  .vgroup button.active { background:var(--card); color:var(--text); font-weight:640; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .vgroup button:active { transform:scale(0.96); }
+  .streak { font-size:13px; color:var(--muted); white-space:nowrap; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:9px 14px; }
   .streak b { color:var(--ok); font-weight:750; }
   .startDateRow { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--muted); }
   .startDateRow input { border:1px solid var(--line); background:var(--card); border-radius:7px; padding:5px 7px; color:inherit; }
@@ -89,26 +93,30 @@
   .actions button { width:100%; }
   .footerNote { color:var(--muted); font-size:12px; margin-top:14px; }
   @media (max-width:800px) { .layout { grid-template-columns:1fr; } .side { position:static; order:-1; } .daysGrid { grid-template-columns:repeat(9,1fr); } }
+  @media (max-width:600px) { .topbar { padding:14px; } .pageHead { align-items:flex-start; } }
   @media (max-width:520px) { .daysGrid { grid-template-columns:repeat(5,1fr); } .wrap { margin-top:18px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>45 Day Interview Sprint</h1>
-  <div class="sub">3h DSA · 2h AI Engineering · 2h System Design · 2h React MC — progress is saved automatically in your browser.</div>
+  <header class="pageHead">
+    <div>
+      <h1>45 Day Interview Sprint</h1>
+      <div class="sub">3h DSA · 2h AI Engineering · 2h System Design · 2h React MC</div>
+    </div>
+    <div class="streak" id="streak"></div>
+  </header>
 
   <div class="topbar">
-    <div class="progressShell">
+    <div class="progressBlock">
       <div class="progressMeta"><span id="progressText">0% complete</span><span id="progressCount">0/0 tasks</span></div>
       <div class="progress"><div id="progressBar"></div></div>
     </div>
-    <div class="headerMeta">
+    <div class="topbarCtl">
       <div class="vgroup" id="viewToggle">
         <button data-view="day" class="active">Day</button>
         <button data-view="week">Week</button>
       </div>
-      <div class="streak" id="streak"></div>
-      <select id="jumpDay" aria-label="Jump to day"></select>
     </div>
   </div>
 
@@ -2528,7 +2536,7 @@
       if(d.day===activeDay) b.classList.add('current');
       if(d.day===currentDayNum() && state._startDate) b.title='today';
       b.title=`Day ${d.day}${d.type?` [${d.type}]`:''}: ${st.done}/${st.total} · ${d.dsa.topic} / ${d.aiEngineering.topic} / ${d.systemDesign.topic} / ${d.react.topic}`;
-      b.addEventListener('click',()=>{activeDay=d.day; document.getElementById('jumpDay').value=String(activeDay); render(); window.scrollTo({top:0,behavior:'smooth'});});
+      b.addEventListener('click',()=>{activeDay=d.day; render(); window.scrollTo({top:0,behavior:'smooth'});});
       grid.appendChild(b);
     });
   }
@@ -2628,7 +2636,7 @@
       const dayTd=document.createElement('td');
       const btn=document.createElement('button'); btn.textContent=`Day ${d}${dd.type==='lighter'?' (light)':''}`;
       btn.addEventListener('click',()=>{activeDay=d; view='day'; document.getElementById('viewToggle').querySelector('[data-view=day]').classList.add('active');
-        document.getElementById('viewToggle').querySelector('[data-view=week]').classList.remove('active'); document.getElementById('jumpDay').value=String(d); render();});
+        document.getElementById('viewToggle').querySelector('[data-view=week]').classList.remove('active'); render();});
       dayTd.appendChild(btn); tr.appendChild(dayTd);
       const top=document.createElement('td');
       top.innerHTML=`${dd.dsa.topic} · ${dd.aiEngineering.topic}`;
@@ -2692,13 +2700,8 @@
   });
   const startInput=document.getElementById('startDate');
   startInput.value=state._startDate || '';
-  startInput.addEventListener('change',()=>{ state._startDate=startInput.value||undefined; saveState(); activeDay=currentDayNum(); document.getElementById('jumpDay').value=String(activeDay); render(); });
+  startInput.addEventListener('change',()=>{ state._startDate=startInput.value||undefined; saveState(); activeDay=currentDayNum(); render(); });
   if(state._startDate) activeDay=currentDayNum();
-
-  const jump=document.getElementById('jumpDay');
-  DATA.days.forEach(d=>{ const o=document.createElement('option'); o.value=d.day; o.textContent=`Day ${d.day}`; jump.appendChild(o); });
-  jump.value=String(activeDay);
-  jump.addEventListener('change',()=>{activeDay=Number(jump.value); render();});
 
   document.getElementById('resetDay').addEventListener('click',()=>{
     if(!confirm(`Reset all progress for Day ${activeDay}?`)) return;
