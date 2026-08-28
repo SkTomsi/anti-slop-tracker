@@ -52,7 +52,6 @@
   .dayBtn.current { outline:2px solid var(--accent); outline-offset:1px; }
   .dayBtn.complete { background:var(--ok); color:#fff; border-color:var(--ok); }
   .dayBtn.lighter { background:var(--soft); color:var(--muted); font-style:italic; }
-  .dayBtn.review { border-color:var(--accent); }
   .legend { margin-top:10px; font-size:11px; color:var(--muted); line-height:1.5; }
   .weakHint { background:var(--soft); border-radius:8px; padding:9px; font-size:12px; line-height:1.45; margin-top:10px; }
   .weakHint b { font-weight:700; }
@@ -83,7 +82,7 @@
     <aside class="side">
       <h3>45-day map</h3>
       <div class="daysGrid" id="daysGrid"></div>
-      <div class="legend">Green = every checklist item for that day is done. <em>Italic</em> = lighter/recovery day. Outlined = review day. Your notes and confidence scores are also saved locally.</div>
+      <div class="legend">Green = every checklist item for that day is done. <em>Italic</em> = lighter/recovery day. Your notes and confidence scores are also saved locally.</div>
       <div class="weakHint" id="weakHint"></div>
       <div class="actions">
         <button id="exportBtn">Export progress</button>
@@ -2435,7 +2434,7 @@
   function renderDayNav(){
     const grid=document.getElementById('daysGrid'); grid.innerHTML='';
     DATA.days.forEach(d => {
-      const b=document.createElement('button'); b.className='dayBtn'+(d.type==='lighter'?' lighter':d.type==='review'?' review':''); b.textContent=d.day;
+      const b=document.createElement('button'); b.className='dayBtn'+(d.type==='lighter'?' lighter':''); b.textContent=d.day;
       if(d.day===activeDay) b.classList.add('current');
       if(isDayComplete(d.day)) b.classList.add('complete');
        b.title=`Day ${d.day}${d.type?` [${d.type}]`:''}: ${d.dsa.topic} / ${d.aiEngineering.topic} / ${d.systemDesign.topic} / ${d.react.topic}`;
