@@ -51,7 +51,37 @@
   .dayBtn { padding:7px 0; font-size:12px; min-width:0; }
   .dayBtn.current { outline:2px solid var(--accent); outline-offset:1px; }
   .dayBtn.complete { background:var(--ok); color:#fff; border-color:var(--ok); }
+  .dayBtn.hp1 { background:color-mix(in srgb, var(--ok) 22%, var(--card)); }
+  .dayBtn.hp2 { background:color-mix(in srgb, var(--ok) 48%, var(--card)); color:var(--bg); }
+  .dayBtn.hp3 { background:color-mix(in srgb, var(--ok) 75%, var(--card)); color:#fff; }
   .dayBtn.lighter { background:var(--soft); color:var(--muted); font-style:italic; }
+  .headerMeta { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .vgroup { display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .vgroup button { border:none; border-radius:0; background:var(--card); }
+  .vgroup button.active { background:var(--accent); color:var(--bg); }
+  .streak { font-size:12px; color:var(--muted); white-space:nowrap; }
+  .streak b { color:var(--ok); font-weight:750; }
+  .startDateRow { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--muted); }
+  .startDateRow input { border:1px solid var(--line); background:var(--card); border-radius:7px; padding:5px 7px; color:inherit; }
+  .weekNav { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .weekNav .weekLabel { font-weight:750; font-size:15px; }
+  .weekTable { width:100%; border-collapse:collapse; font-size:13px; }
+  .weekTable th, .weekTable td { border-bottom:1px solid var(--line); padding:7px 6px; text-align:left; vertical-align:top; }
+  .weekTable th { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; }
+  .weekTable tr.rowToday td { background:var(--soft); }
+  .weekDayName { font-weight:750; white-space:nowrap; }
+  .weekDayName button { all:unset; cursor:pointer; color:var(--accent); }
+  .weekDayName button:hover { text-decoration:underline; }
+  .miniBar { height:4px; background:var(--soft); border-radius:999px; overflow:hidden; margin-top:4px; }
+  .miniBar > div { height:100%; background:var(--ok); }
+  .weekNotes { color:var(--muted); font-size:12px; }
+  .heatLegend { display:flex; gap:6px; align-items:center; font-size:11px; color:var(--muted); margin-top:8px; flex-wrap:wrap; }
+  .heatLegend .cell { width:14px; height:14px; border-radius:4px; border:1px solid var(--line); }
+  .heatLegend .cell.c0 { background:var(--card); }
+  .heatLegend .cell.c1 { background:color-mix(in srgb, var(--ok) 22%, var(--card)); }
+  .heatLegend .cell.c2 { background:color-mix(in srgb, var(--ok) 48%, var(--card)); }
+  .heatLegend .cell.c3 { background:color-mix(in srgb, var(--ok) 75%, var(--card)); }
+  .heatLegend .cell.c4 { background:var(--ok); }
   .legend { margin-top:10px; font-size:11px; color:var(--muted); line-height:1.5; }
   .weakHint { background:var(--soft); border-radius:8px; padding:9px; font-size:12px; line-height:1.45; margin-top:10px; }
   .weakHint b { font-weight:700; }
@@ -72,7 +102,14 @@
       <div class="progressMeta"><span id="progressText">0% complete</span><span id="progressCount">0/0 tasks</span></div>
       <div class="progress"><div id="progressBar"></div></div>
     </div>
-    <select id="jumpDay" aria-label="Jump to day"></select>
+    <div class="headerMeta">
+      <div class="vgroup" id="viewToggle">
+        <button data-view="day" class="active">Day</button>
+        <button data-view="week">Week</button>
+      </div>
+      <div class="streak" id="streak"></div>
+      <select id="jumpDay" aria-label="Jump to day"></select>
+    </div>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -82,7 +119,14 @@
     <aside class="side">
       <h3>45-day map</h3>
       <div class="daysGrid" id="daysGrid"></div>
-      <div class="legend">Green = every checklist item for that day is done. <em>Italic</em> = lighter/recovery day. Your notes and confidence scores are also saved locally.</div>
+      <div class="heatLegend">
+        <span class="cell c0"></span><span>none</span><span class="cell c1"></span><span>low</span><span class="cell c2"></span><span>mid</span><span class="cell c3"></span><span>high</span><span class="cell c4"></span><span>done</span>
+      </div>
+      <div class="startDateRow">
+        <label for="startDate" style="white-space:nowrap">Start date:</label>
+        <input type="date" id="startDate" />
+      </div>
+      <div class="legend"><em>Italic</em> = lighter/recovery day. Your notes and confidence scores are also saved locally.</div>
       <div class="weakHint" id="weakHint"></div>
       <div class="actions">
         <button id="exportBtn">Export progress</button>
@@ -2382,6 +2426,8 @@
   ];
   let activeDay = 1;
   let activeTrack = 'all';
+  let view = 'day';
+  let weekIdx = 0;
   let state = loadState();
 
   function loadState(){
@@ -2407,6 +2453,45 @@
   }
   function isDayComplete(day){ return tracks.every(t => isTrackComplete(day,t.key)); }
 
+  function dayStats(day){
+    let total=0, done=0;
+    tracks.forEach(t => itemList(dayData(day)[t.key]).forEach(it => {
+      total++; if(state[key(day,t.key,it.type,it.idx)]) done++;
+    }));
+    return {total, done, frac: total? done/total : 0, pct: total? Math.round(done/total*100):0};
+  }
+  function trackStats(trackKey){
+    let total=0, done=0;
+    DATA.days.forEach(d => itemList(d[trackKey]).forEach(it => {
+      total++; if(state[key(d.day,trackKey,it.type,it.idx)]) done++;
+    }));
+    return {total, done, pct: total? Math.round(done/total*100):0};
+  }
+
+  function heatClass(frac){
+    if(frac>=1) return 'complete';
+    if(frac>=0.67) return 'hp3';
+    if(frac>=0.34) return 'hp2';
+    if(frac>=0.01) return 'hp1';
+    return '';
+  }
+  function dayAvgConfidence(day){
+    const vals=tracks.map(t=>state[key(day,t.key,'confidence')]).filter(v=>v>0);
+    if(!vals.length) return 0;
+    return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10;
+  }
+  function dayHasNotes(day){
+    return tracks.some(t=>{ const n=state[key(day,t.key,'notes')]||''; return n.trim().length>0; });
+  }
+  function currentDayNum(){
+    if(!state._startDate) return 1;
+    const start=new Date(state._startDate+'T00:00:00');
+    const today=new Date();
+    today.setHours(0,0,0,0);
+    const diff=Math.floor((today-start)/86400000)+1;
+    return Math.max(1, Math.min(45, diff));
+  }
+
   function allStats(){
     let total=0, done=0;
     DATA.days.forEach(d => tracks.forEach(t => itemList(d[t.key]).forEach(it => {
@@ -2417,9 +2502,10 @@
 
   function renderTabs(){
     const tabs = document.getElementById('tabs'); tabs.innerHTML='';
-    [{key:'all',label:'All tracks',icon:'📚'}, ...tracks].forEach(t => {
+    const overall=allStats();
+    [{key:'all',label:'All tracks',icon:'📚',s:overall}, ...tracks.map(t=>({...t, s:trackStats(t.key)}))].forEach(t => {
       const b=document.createElement('button'); b.className='tab'+(activeTrack===t.key?' active':'');
-      b.textContent=`${t.icon} ${t.label}`;
+      b.textContent=`${t.icon} ${t.label} ${t.s.pct}%`;
       b.addEventListener('click',()=>{activeTrack=t.key; render();}); tabs.appendChild(b);
     });
   }
@@ -2434,10 +2520,14 @@
   function renderDayNav(){
     const grid=document.getElementById('daysGrid'); grid.innerHTML='';
     DATA.days.forEach(d => {
-      const b=document.createElement('button'); b.className='dayBtn'+(d.type==='lighter'?' lighter':''); b.textContent=d.day;
+      const st=dayStats(d.day);
+      const b=document.createElement('button');
+      b.className='dayBtn'+(d.type==='lighter'?' lighter':'');
+      if(st.frac>0) b.classList.add(heatClass(st.frac));
+      b.textContent=d.day;
       if(d.day===activeDay) b.classList.add('current');
-      if(isDayComplete(d.day)) b.classList.add('complete');
-       b.title=`Day ${d.day}${d.type?` [${d.type}]`:''}: ${d.dsa.topic} / ${d.aiEngineering.topic} / ${d.systemDesign.topic} / ${d.react.topic}`;
+      if(d.day===currentDayNum() && state._startDate) b.title='today';
+      b.title=`Day ${d.day}${d.type?` [${d.type}]`:''}: ${st.done}/${st.total} · ${d.dsa.topic} / ${d.aiEngineering.topic} / ${d.systemDesign.topic} / ${d.react.topic}`;
       b.addEventListener('click',()=>{activeDay=d.day; document.getElementById('jumpDay').value=String(activeDay); render(); window.scrollTo({top:0,behavior:'smooth'});});
       grid.appendChild(b);
     });
@@ -2498,6 +2588,64 @@
     label.append(cb,span); return label;
   }
 
+  function renderStreak(){
+    const el=document.getElementById('streak'); if(!el) return;
+    const cur=currentDayNum();
+    let streak=0;
+    for(let d=cur; d>=1; d--){ if(dayStats(d).done>0) streak++; else break; }
+    const todayMark=(state._startDate && cur===Math.max(1,Math.min(45,currentDayNum())));
+    el.innerHTML=`🔥 <b>${streak}</b> day streak${state._startDate?` · today = Day ${cur}`:' — set start date'}`;
+  }
+
+  function weekRange(){
+    const start=weekIdx*7+1;
+    const end=Math.min(45, start+6);
+    return {start,end};
+  }
+
+  function renderWeek(){
+    const app=document.getElementById('app'); app.innerHTML='';
+    const {start,end}=weekRange();
+    const cur=currentDayNum();
+    const nav=document.createElement('div'); nav.className='weekNav';
+    const prev=document.createElement('button'); prev.textContent='‹ Prev'; prev.disabled=start<=1;
+    prev.addEventListener('click',()=>{weekIdx--; render();});
+    const lbl=document.createElement('span'); lbl.className='weekLabel';
+    lbl.textContent=`Week ${weekIdx+1} (Days ${start}–${end})`;
+    const next=document.createElement('button'); next.textContent='Next ›'; next.disabled=end>=45;
+    next.addEventListener('click',()=>{weekIdx++; render();});
+    nav.append(prev,lbl,next); app.appendChild(nav);
+
+    const table=document.createElement('table'); table.className='weekTable';
+    const thead=document.createElement('thead');
+    thead.innerHTML='<tr><th>Day</th><th>Topics</th><th>Done</th><th>Conf</th><th>Notes</th></tr>';
+    table.appendChild(thead);
+    const tbody=document.createElement('tbody');
+    for(let d=start; d<=end; d++){
+      const dd=dayData(d); const st=dayStats(d);
+      const tr=document.createElement('tr');
+      if(state._startDate && d===cur) tr.classList.add('rowToday');
+      const dayTd=document.createElement('td');
+      const btn=document.createElement('button'); btn.textContent=`Day ${d}${dd.type==='lighter'?' (light)':''}`;
+      btn.addEventListener('click',()=>{activeDay=d; view='day'; document.getElementById('viewToggle').querySelector('[data-view=day]').classList.add('active');
+        document.getElementById('viewToggle').querySelector('[data-view=week]').classList.remove('active'); document.getElementById('jumpDay').value=String(d); render();});
+      dayTd.appendChild(btn); tr.appendChild(dayTd);
+      const top=document.createElement('td');
+      top.innerHTML=`${dd.dsa.topic} · ${dd.aiEngineering.topic}`;
+      tr.appendChild(top);
+      const dontd=document.createElement('td');
+      dontd.innerHTML=`${st.done}/${st.total}<div class="miniBar"><div style="width:${st.pct}%"></div></div>`;
+      tr.appendChild(dontd);
+      const conftd=document.createElement('td'); const c=dayAvgConfidence(d);
+      conftd.textContent=c? c.toFixed(1)+'/5' : '—'; tr.appendChild(conftd);
+      const notestd=document.createElement('td'); notestd.className='weekNotes';
+      notestd.textContent=dayHasNotes(d)? '✎' : '';
+      tr.appendChild(notestd);
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody); app.appendChild(table);
+  }
+
   function renderMain(){
     const app=document.getElementById('app'); app.innerHTML='';
     const header=document.createElement('div'); header.className='dayHeader';
@@ -2532,7 +2680,20 @@
     }
   }
 
-  function render(){ renderTabs(); renderProgress(); renderDayNav(); renderMain(); renderWeakHint(); }
+  function render(){
+    document.querySelectorAll('#viewToggle button').forEach(b=>b.classList.toggle('active', b.dataset.view===view));
+    renderTabs(); renderProgress(); renderDayNav(); renderStreak();
+    if(view==='week') renderWeek(); else renderMain();
+    renderWeakHint();
+  }
+
+  document.querySelectorAll('#viewToggle button').forEach(b=>{
+    b.addEventListener('click',()=>{ view=b.dataset.view; if(view==='week' && !weekIdx){ weekIdx=Math.max(0, Math.floor((activeDay-1)/7)); } render(); });
+  });
+  const startInput=document.getElementById('startDate');
+  startInput.value=state._startDate || '';
+  startInput.addEventListener('change',()=>{ state._startDate=startInput.value||undefined; saveState(); activeDay=currentDayNum(); document.getElementById('jumpDay').value=String(activeDay); render(); });
+  if(state._startDate) activeDay=currentDayNum();
 
   const jump=document.getElementById('jumpDay');
   DATA.days.forEach(d=>{ const o=document.createElement('option'); o.value=d.day; o.textContent=`Day ${d.day}`; jump.appendChild(o); });
