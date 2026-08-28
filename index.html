@@ -51,7 +51,11 @@
   .dayBtn { padding:7px 0; font-size:12px; min-width:0; }
   .dayBtn.current { outline:2px solid var(--accent); outline-offset:1px; }
   .dayBtn.complete { background:var(--ok); color:#fff; border-color:var(--ok); }
+  .dayBtn.lighter { background:var(--soft); color:var(--muted); font-style:italic; }
+  .dayBtn.review { border-color:var(--accent); }
   .legend { margin-top:10px; font-size:11px; color:var(--muted); line-height:1.5; }
+  .weakHint { background:var(--soft); border-radius:8px; padding:9px; font-size:12px; line-height:1.45; margin-top:10px; }
+  .weakHint b { font-weight:700; }
   .actions { margin-top:12px; display:grid; gap:7px; }
   .actions button { width:100%; }
   .footerNote { color:var(--muted); font-size:12px; margin-top:14px; }
@@ -79,7 +83,8 @@
     <aside class="side">
       <h3>45-day map</h3>
       <div class="daysGrid" id="daysGrid"></div>
-      <div class="legend">Green = every checklist item for that day is done. Your notes and confidence scores are also saved locally.</div>
+      <div class="legend">Green = every checklist item for that day is done. <em>Italic</em> = lighter/recovery day. Outlined = review day. Your notes and confidence scores are also saved locally.</div>
+      <div class="weakHint" id="weakHint"></div>
       <div class="actions">
         <button id="exportBtn">Export progress</button>
         <button id="importBtn">Import progress</button>
@@ -258,7 +263,8 @@
           "Cache-aside",
           "TTL",
           "Invalidation",
-          "Cache stampede"
+          "Cache stampede",
+          "Capacity estimation"
         ],
         "practical": "Design an API caching layer."
       },
@@ -369,7 +375,8 @@
           "Kafka",
           "RabbitMQ",
           "Producers / consumers",
-          "Consumer groups"
+          "Consumer groups",
+          "Capacity estimation"
         ],
         "practical": "Design a background job processing architecture."
       },
@@ -426,7 +433,8 @@
           "Fixed window",
           "Sliding window",
           "Token bucket",
-          "Redis implementation"
+          "Redis implementation",
+          "Capacity estimation"
         ],
         "practical": "Design a distributed rate limiter."
       },
@@ -496,7 +504,8 @@
           "Re-solve failed builds"
         ],
         "practical": "Rebuild a Week 1 component from memory under time pressure."
-      }
+      },
+      "type": "review"
     },
     {
       "day": 8,
@@ -535,7 +544,8 @@
           "Primary / replica",
           "Read replicas",
           "Failover",
-          "Replication lag"
+          "Replication lag",
+          "Capacity estimation"
         ],
         "practical": "Add replication to an existing database architecture."
       },
@@ -701,7 +711,8 @@
         "subtopics": [
           "Inverted index",
           "Indexing pipeline",
-          "Elasticsearch/OpenSearch concepts"
+          "Elasticsearch/OpenSearch concepts",
+          "Capacity estimation"
         ],
         "practical": "Design a searchable document platform."
       },
@@ -868,7 +879,8 @@
           "Timed typeahead + loading build"
         ],
         "practical": "Rebuild a typeahead from memory under time pressure."
-      }
+      },
+      "type": "review"
     },
     {
       "day": 15,
@@ -907,7 +919,8 @@
           "SMS",
           "Queues",
           "Retries",
-          "Deduplication"
+          "Deduplication",
+          "Capacity estimation"
         ],
         "practical": "Design a multi-channel notification service."
       },
@@ -923,7 +936,8 @@
           "Typeahead with arrow-key + Enter selection"
         ],
         "practical": "Build an accessible typeahead."
-      }
+      },
+      "type": "lighter"
     },
     {
       "day": 16,
@@ -959,7 +973,8 @@
           "Message persistence",
           "Ordering",
           "Delivery",
-          "Offline users"
+          "Offline users",
+          "Capacity estimation"
         ],
         "practical": "Design WhatsApp."
       },
@@ -1011,7 +1026,8 @@
         "subtopics": [
           "Fanout on write",
           "Fanout on read",
-          "Celebrity problem"
+          "Celebrity problem",
+          "Capacity estimation"
         ],
         "practical": "Design Twitter/X feed."
       },
@@ -1053,7 +1069,8 @@
           "Retries",
           "Checkpoints",
           "Human approval",
-          "Termination"
+          "Termination",
+          "Agentic design patterns (reflection, planning, multi-agent)"
         ],
         "practical": "Build a stateful agent using multiple tools."
       },
@@ -1118,7 +1135,8 @@
           "Idempotency",
           "Transactions",
           "Retries",
-          "Ledger concepts"
+          "Ledger concepts",
+          "Capacity estimation"
         ],
         "practical": "Design a Stripe-like payment flow."
       },
@@ -1224,7 +1242,8 @@
           "RAG",
           "Tools",
           "Persistence",
-          "Rate limits"
+          "Rate limits",
+          "Capacity estimation"
         ],
         "practical": "Design a ChatGPT-like system."
       },
@@ -1240,18 +1259,24 @@
           "Timed data table (sort + filter + paginate)"
         ],
         "practical": "Rebuild a data table from memory under time pressure."
-      }
+      },
+      "type": "review"
     },
     {
       "day": 22,
       "dsa": {
         "durationHours": 3,
-        "topic": "Mixed Arrays & Hashing",
+        "topic": "Trie",
         "subtopics": [
-          "Pattern recognition"
+          "Prefix tree construction",
+          "Search",
+          "Autocomplete",
+          "Word search variants"
         ],
         "problems": [
-          "Interview-style Medium problems"
+          "Implement Trie",
+          "Word Search II",
+          "Design Add and Search Words Data Structure"
         ]
       },
       "aiEngineering": {
@@ -1288,12 +1313,17 @@
       "day": 23,
       "dsa": {
         "durationHours": 3,
-        "topic": "Mixed Sliding Window & Two Pointers",
+        "topic": "Union-Find / Disjoint Set",
         "subtopics": [
-          "Pattern recognition"
+          "Union by rank",
+          "Path compression",
+          "Connected components",
+          "Cycle detection in undirected graphs"
         ],
         "problems": [
-          "Medium problems without topic hints"
+          "Number of Provinces",
+          "Redundant Connection",
+          "Accounts Merge"
         ]
       },
       "aiEngineering": {
@@ -1331,31 +1361,43 @@
       "day": 24,
       "dsa": {
         "durationHours": 3,
-        "topic": "Mixed Binary Search",
+        "topic": "Bit Manipulation",
         "subtopics": [
-          "Search-space recognition"
+          "XOR tricks",
+          "Bit masking",
+          "Subset enumeration",
+          "Counting bits"
         ],
         "problems": [
-          "Binary-search Medium problems"
+          "Single Number II",
+          "Counting Bits",
+          "Bitwise AND of Numbers Range"
         ]
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "Cost Optimization",
+        "topic": "Inference Optimization",
         "subtopics": [
-          "Model selection",
-          "Prompt reduction",
-          "Caching",
-          "Token limits",
-          "Batching"
+          "KV cache",
+          "Batching strategies",
+          "Quantization (INT8/INT4)",
+          "vLLM concepts",
+          "Throughput vs latency",
+          "Speculative decoding"
         ],
-        "practical": "Measure and reduce the cost of an existing AI workflow."
+        "practical": "Measure and optimize latency of an LLM call using caching, batching, and quantization.",
+        "problems": []
       },
       "systemDesign": {
         "durationHours": 2,
-        "topic": "Netflix",
-        "subtopics": [],
-        "practical": "Design content storage, transcoding, CDN and recommendations at high level."
+        "topic": "gRPC & Service Mesh",
+        "subtopics": [
+          "Protobuf",
+          "gRPC vs REST",
+          "Service mesh concepts",
+          "Istio/Envoy basics"
+        ],
+        "practical": "Design a gRPC-based microservice communication layer."
       },
       "react": {
         "durationHours": 2,
@@ -1374,12 +1416,17 @@
       "day": 25,
       "dsa": {
         "durationHours": 3,
-        "topic": "Mixed Stack & Heap",
+        "topic": "Greedy & Intervals",
         "subtopics": [
-          "Pattern recognition"
+          "Interval scheduling",
+          "Greedy proof intuition",
+          "Activity selection",
+          "Sweep line"
         ],
         "problems": [
-          "Stack / priority-queue Medium problems"
+          "Non-overlapping Intervals",
+          "Jump Game",
+          "Task Scheduler"
         ]
       },
       "aiEngineering": {
@@ -1396,15 +1443,15 @@
       },
       "systemDesign": {
         "durationHours": 2,
-        "topic": "API Gateway",
+        "topic": "Consistent Hashing & Bloom Filters",
         "subtopics": [
-          "Routing",
-          "Authentication",
-          "Rate limits",
-          "Observability",
-          "Load balancing"
+          "Consistent hashing rings",
+          "Virtual nodes",
+          "Bloom filter math",
+          "False positive rate",
+          "Use cases"
         ],
-        "practical": "Design a distributed API gateway."
+        "practical": "Explain how consistent hashing distributes a cache across nodes."
       },
       "react": {
         "durationHours": 2,
@@ -1428,19 +1475,23 @@
           "Tree patterns"
         ],
         "problems": [
-          "Tree Medium problems under time pressure"
+          "Binary Tree Right Side View",
+          "Serialize and Deserialize Binary Tree",
+          "Validate BST"
         ]
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "Streaming AI Systems",
+        "topic": "Multimodal & Voice Agents",
         "subtopics": [
-          "SSE",
-          "Token streaming",
-          "Cancellation",
-          "Connection failures"
+          "Vision models (GPT-4V, Claude Vision)",
+          "Image + text inputs",
+          "Audio transcription (Whisper)",
+          "TTS pipelines",
+          "Voice agent architecture"
         ],
-        "practical": "Build robust streaming with cancellation."
+        "practical": "Build a simple multimodal pipeline: image → description → structured output.",
+        "problems": []
       },
       "systemDesign": {
         "durationHours": 2,
@@ -1476,7 +1527,9 @@
           "Graph pattern recognition"
         ],
         "problems": [
-          "Graph Medium problems without hints"
+          "Clone Graph",
+          "Course Schedule",
+          "Word Ladder"
         ]
       },
       "aiEngineering": {
@@ -1517,38 +1570,43 @@
       "day": 28,
       "dsa": {
         "durationHours": 3,
-        "topic": "Mixed DP",
+        "topic": "Mixed DP (incl. Knapsack & Edit Distance)",
         "subtopics": [
-          "State and transition identification"
+          "State and transition identification",
+          "0/1 Knapsack pattern",
+          "Edit distance pattern",
+          "Bitmask DP intro"
         ],
         "problems": [
-          "DP Medium problems"
+          "Longest Common Subsequence",
+          "Edit Distance",
+          "Partition Equal Subset Sum"
         ]
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "Multi-Model AI Architecture",
+        "topic": "MCP & Agent Interoperability",
         "subtopics": [
-          "LLM gateway",
-          "Model router",
-          "Cache",
-          "Vector DB",
-          "Queues",
-          "Observability"
+          "Model Context Protocol (MCP)",
+          "Tool protocol design",
+          "Agent-to-agent communication",
+          "Standardized tool schemas",
+          "OpenAI function calling vs MCP"
         ],
-        "practical": "Design the architecture from scratch."
+        "practical": "Design an MCP server exposing 3 tools and explain the protocol flow.",
+        "problems": []
       },
       "systemDesign": {
         "durationHours": 2,
-        "topic": "Distributed Scheduler",
+        "topic": "Consensus & Quorum (Raft/Paxos)",
         "subtopics": [
-          "Scheduling",
-          "Workers",
-          "Leases",
-          "Retries",
-          "Failure handling"
+          "Leader election",
+          "Log replication",
+          "Quorum reads/writes",
+          "Raft vs Paxos",
+          "Split brain"
         ],
-        "practical": "Design a distributed scheduler."
+        "practical": "Explain Raft consensus for a 5-node cluster."
       },
       "react": {
         "durationHours": 2,
@@ -1572,18 +1630,22 @@
           "Random pattern recognition"
         ],
         "problems": [
-          "3 random interview Medium problems"
+          "Two Sum II",
+          "Product of Array Except Self",
+          "Longest Consecutive Sequence"
         ]
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "AI Security",
+        "topic": "AI Security & OWASP LLM Top 10",
         "subtopics": [
+          "OWASP LLM Top 10",
           "Prompt injection",
           "PII",
           "Tool permissions",
           "Output validation",
-          "Rate limiting"
+          "Rate limiting",
+          "Data leakage"
         ],
         "practical": "Perform a security review of your AI project."
       },
@@ -1615,7 +1677,7 @@
           "Timed interview execution"
         ],
         "problems": [
-          "Realistic timed coding round"
+          "Realistic timed coding round: 3 problems in 90 minutes"
         ]
       },
       "aiEngineering": {
@@ -1649,18 +1711,23 @@
           "Mini app: notes + search + tags"
         ],
         "practical": "Build a small notes app under time pressure."
-      }
+      },
+      "type": "review"
     },
     {
       "day": 31,
       "dsa": {
         "durationHours": 3,
-        "topic": "Arrays & Hashing Mock",
+        "topic": "String & KMP Mock",
         "subtopics": [
-          "Timed execution"
+          "Pattern matching",
+          "KMP concept",
+          "String manipulation"
         ],
         "problems": [
-          "Interview problems"
+          "Repeated Substring Pattern",
+          "Implement strStr()",
+          "Longest Palindromic Substring"
         ]
       },
       "aiEngineering": {
@@ -1689,7 +1756,8 @@
           "Interview-style typeahead"
         ],
         "practical": "Complete a timed typeahead mock."
-      }
+      },
+      "type": "lighter"
     },
     {
       "day": 32,
@@ -1700,7 +1768,8 @@
           "Timed execution"
         ],
         "problems": [
-          "Interview problems"
+          "Minimum Window Substring",
+          "Longest Substring with At Most K Distinct Characters"
         ]
       },
       "aiEngineering": {
@@ -1741,7 +1810,9 @@
           "Timed execution"
         ],
         "problems": [
-          "Interview problems"
+          "Binary Tree Right Side View",
+          "Serialize and Deserialize Binary Tree",
+          "Binary Tree Zigzag Level Order Traversal"
         ]
       },
       "aiEngineering": {
@@ -1783,7 +1854,9 @@
           "Timed execution"
         ],
         "problems": [
-          "Interview problems"
+          "Alien Dictionary",
+          "Course Schedule III",
+          "Word Ladder"
         ]
       },
       "aiEngineering": {
@@ -1819,24 +1892,31 @@
       "day": 35,
       "dsa": {
         "durationHours": 3,
-        "topic": "Heap & Binary Search Mock",
+        "topic": "Advanced DP Mock",
         "subtopics": [
-          "Timed execution"
+          "Knapsack",
+          "Edit distance",
+          "Bitmask DP"
         ],
         "problems": [
-          "Interview problems"
+          "0/1 Knapsack",
+          "Decode Ways",
+          "Burst Balloons"
         ]
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "Evaluation Deep Dive",
+        "topic": "Eval Frameworks",
         "subtopics": [
-          "Offline eval",
-          "Regression tests",
-          "Retrieval eval",
-          "Answer eval"
+          "RAGAS framework",
+          "deepeval",
+          "LLM-as-judge",
+          "Unit tests for AI",
+          "Regression suites",
+          "Score interpretation"
         ],
-        "practical": "Explain how you know whether an AI system is improving."
+        "practical": "Write RAGAS eval suite against a RAG pipeline and interpret results.",
+        "problems": []
       },
       "systemDesign": {
         "durationHours": 2,
@@ -1854,7 +1934,8 @@
           "Interview-style form"
         ],
         "practical": "Complete a timed form mock."
-      }
+      },
+      "type": "lighter"
     },
     {
       "day": 36,
@@ -1865,19 +1946,24 @@
           "Timed execution"
         ],
         "problems": [
-          "Interview problems"
+          "Decode Ways",
+          "Unique Paths",
+          "Burst Balloons"
         ]
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "AI Security Interview",
+        "topic": "Fine-tuning & PEFT",
         "subtopics": [
-          "Prompt injection",
-          "Permissions",
-          "PII",
-          "Tool abuse"
+          "When to fine-tune vs prompt",
+          "LoRA",
+          "QLoRA",
+          "Training data prep",
+          "Hyperparameters",
+          "Evaluation of fine-tuned models"
         ],
-        "practical": "Threat-model an agentic application."
+        "practical": "Explain when fine-tuning beats prompting and walk through a LoRA workflow.",
+        "problems": []
       },
       "systemDesign": {
         "durationHours": 2,
@@ -1906,7 +1992,7 @@
           "Interview simulation"
         ],
         "problems": [
-          "45–60 minute mock"
+          "2 Medium problems in 60 minutes (random topics)"
         ]
       },
       "aiEngineering": {
@@ -1978,7 +2064,8 @@
           "Re-build failures"
         ],
         "practical": "Rebuild your weakest component from memory."
-      }
+      },
+      "type": "review"
     },
     {
       "day": 39,
@@ -1994,15 +2081,18 @@
       },
       "aiEngineering": {
         "durationHours": 2,
-        "topic": "LLM Inference",
+        "topic": "LLMOps & Deployment",
         "subtopics": [
-          "Tokens",
-          "Context windows",
-          "Temperature",
-          "Model selection",
-          "Latency"
+          "Docker for ML",
+          "Kubernetes basics",
+          "CI/CD for AI",
+          "Model registry",
+          "A/B testing",
+          "Rollout strategies",
+          "Monitoring in prod"
         ],
-        "practical": "Answer common inference interview questions."
+        "practical": "Design a CI/CD pipeline for deploying an AI model to production.",
+        "problems": []
       },
       "systemDesign": {
         "durationHours": 2,
@@ -2116,7 +2206,7 @@
           "Real interview conditions"
         ],
         "problems": [
-          "Full mock"
+          "2 Medium + 1 Hard in 60 minutes"
         ]
       },
       "aiEngineering": {
@@ -2176,11 +2266,14 @@
       },
       "systemDesign": {
         "durationHours": 2,
-        "topic": "Tradeoff Review",
+        "topic": "Tradeoff Review & Decision Framework",
         "subtopics": [
-          "Architecture decisions"
+          "Architecture decisions",
+          "CAP tradeoffs",
+          "Cost vs performance",
+          "Build vs buy"
         ],
-        "practical": "Practice explaining WHY behind choices."
+        "practical": "Practice explaining WHY behind choices using a decision framework."
       },
       "react": {
         "durationHours": 2,
@@ -2192,7 +2285,8 @@
           "Re-build previously failed builds"
         ],
         "practical": "Rebuild your second weakest component."
-      }
+      },
+      "type": "review"
     },
     {
       "day": 44,
@@ -2203,7 +2297,7 @@
           "Real interview conditions"
         ],
         "problems": [
-          "45–60 minute mock"
+          "2 Medium problems in 45 minutes"
         ]
       },
       "aiEngineering": {
@@ -2243,7 +2337,7 @@
           "Complexity analysis"
         ],
         "problems": [
-          "2 Medium problems in 60 minutes"
+          "2 Medium + 1 Hard in 60 minutes"
         ]
       },
       "aiEngineering": {
@@ -2341,10 +2435,10 @@
   function renderDayNav(){
     const grid=document.getElementById('daysGrid'); grid.innerHTML='';
     DATA.days.forEach(d => {
-      const b=document.createElement('button'); b.className='dayBtn'; b.textContent=d.day;
+      const b=document.createElement('button'); b.className='dayBtn'+(d.type==='lighter'?' lighter':d.type==='review'?' review':''); b.textContent=d.day;
       if(d.day===activeDay) b.classList.add('current');
       if(isDayComplete(d.day)) b.classList.add('complete');
-       b.title=`Day ${d.day}: ${d.dsa.topic} / ${d.aiEngineering.topic} / ${d.systemDesign.topic} / ${d.react.topic}`;
+       b.title=`Day ${d.day}${d.type?` [${d.type}]`:''}: ${d.dsa.topic} / ${d.aiEngineering.topic} / ${d.systemDesign.topic} / ${d.react.topic}`;
       b.addEventListener('click',()=>{activeDay=d.day; document.getElementById('jumpDay').value=String(activeDay); render(); window.scrollTo({top:0,behavior:'smooth'});});
       grid.appendChild(b);
     });
@@ -2422,7 +2516,24 @@
     show.forEach(t=>app.appendChild(makeTrack(t)));
   }
 
-  function render(){ renderTabs(); renderProgress(); renderDayNav(); renderMain(); }
+  function renderWeakHint(){
+    const el=document.getElementById('weakHint'); if(!el) return;
+    const scored=tracks.map(t=>{
+      const c=state[key(activeDay,t.key,'confidence')];
+      const done=itemList(dayData(activeDay)[t.key]).filter(it=>state[key(activeDay,t.key,it.type,it.idx)]).length;
+      return {label:t.label, c:c||0, done, total:itemList(dayData(activeDay)[t.key]).length};
+    });
+    const weakest=scored.filter(s=>s.c>0).sort((a,b)=>a.c-b.c).slice(0,2);
+    if(weakest.length){
+      el.innerHTML=`<b>Suggested weak area:</b> ${weakest.map(w=>`${w.label} (${w.c}/5)`).join(' · ')}. Revisit on a weak-area day.`;
+    } else if(scored.some(s=>s.total===0)){
+      el.textContent='Set confidence scores as you go — this surfaces your weakest tracks for review days.';
+    } else {
+      el.textContent='Rate your confidence each day — the two lowest become your suggested weak-area review.';
+    }
+  }
+
+  function render(){ renderTabs(); renderProgress(); renderDayNav(); renderMain(); renderWeakHint(); }
 
   const jump=document.getElementById('jumpDay');
   DATA.days.forEach(d=>{ const o=document.createElement('option'); o.value=d.day; o.textContent=`Day ${d.day}`; jump.appendChild(o); });
